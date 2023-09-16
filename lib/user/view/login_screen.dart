@@ -16,11 +16,12 @@ class LoginScreen extends StatelessWidget {
           top: true,
           bottom: false,
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const _Title(),
+                const SizedBox(height: 16.0),
                 const _SubTitle(),
                 Image.asset(
                   'asset/img/misc/logo.png',
@@ -30,11 +31,13 @@ class LoginScreen extends StatelessWidget {
                   hintText: '이메일을 입력해주세요.',
                   onChanged: (String value) {},
                 ),
+                const SizedBox(height: 16.0),
                 CustomTextFormField(
                   hintText: '비밀번호를 입력해주세요.',
                   onChanged: (String value) {},
                   obscureText: true,
                 ),
+                const SizedBox(height: 16.0),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: PRIMARY_COLOR,
