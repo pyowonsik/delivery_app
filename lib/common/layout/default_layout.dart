@@ -19,20 +19,7 @@ class DefaultLayout extends StatelessWidget {
     return Scaffold(
       backgroundColor: backgroundColor ?? Colors.white,
       appBar: renderAppBar(),
-      body: TabBarView(children: [
-        Container(
-          child: Text('홈'),
-        ),
-        Container(
-          child: Text('음식'),
-        ),
-        Container(
-          child: Text('주문'),
-        ),
-        Container(
-          child: Text('프로필 '),
-        ),
-      ]),
+      body: child,
       bottomNavigationBar: bottomNavigationBar,
     );
   }
