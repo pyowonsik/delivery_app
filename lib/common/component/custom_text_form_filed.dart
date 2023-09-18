@@ -28,7 +28,7 @@ class CustomTextFormField extends StatelessWidget {
       cursorColor: PRIMARY_COLOR,
       obscureText: obscureText, // 비밀번호 입력시
       autofocus: autofocus,
-      onChanged: (value) {},
+      onChanged: onChanged,
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.all(20),
         hintText: hintText,

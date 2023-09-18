@@ -4,11 +4,20 @@ import 'dart:io';
 import 'package:delivery_app/common/component/custom_text_form_filed.dart';
 import 'package:delivery_app/common/const/colors.dart';
 import 'package:delivery_app/common/layout/default_layout.dart';
+import 'package:delivery_app/common/view/root_tab.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  String username = '';
+  String password = '';
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +48,16 @@ class LoginScreen extends StatelessWidget {
                 ),
                 CustomTextFormField(
                   hintText: '이메일을 입력해주세요.',
-                  onChanged: (String value) {},
+                  onChanged: (String value) {
+                    username = value;
+                  },
                 ),
                 const SizedBox(height: 16.0),
                 CustomTextFormField(
                   hintText: '비밀번호를 입력해주세요.',
-                  onChanged: (String value) {},
+                  onChanged: (String value) {
+                    password = value;
+                  },
                   obscureText: true,
                 ),
                 const SizedBox(height: 16.0),
@@ -54,7 +67,8 @@ class LoginScreen extends StatelessWidget {
                   ),
                   onPressed: () async {
                     // Id:Pass
-                    final rawString = 'test@codefactory.ai:testtest';
+                    // final rawString = 'test@codefactory.ai:testtest';
+                    final rawString = '$username:$password';
 
                     // string -> base64 인코딩 코드
                     Codec<String, String> stringToBase64 = utf8.fuse(base64);
@@ -66,23 +80,24 @@ class LoginScreen extends StatelessWidget {
                           Options(headers: {'authorization': 'Basic $token'}),
                     );
 
-                    print(resp.data);
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => RootTab()));
+
+                    // refreshToken
+                    // final refreshToken =
+                    //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RAY29kZWZhY3RvcnkuYWkiLCJzdWIiOiJmNTViMzJkMi00ZDY4LTRjMWUtYTNjYS1kYTlkN2QwZDkyZTUiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTY5NDk5MTk2NSwiZXhwIjoxNjk1MDc4MzY1fQ.YlNLsgOMoMJISuvfqBYbHFZGJF7lG6U4aW7fRzeWbYw';
+                    // final resp = await dio.post(
+                    //   'http://$ip/auth/token',
+                    //   options: Options(
+                    //       headers: {'authorization': 'Bearer $refreshToken'}),
+                    // );
+                    // print(resp.data);
                   },
                   child: Text('로그인'),
                 ),
                 TextButton(
                   style: TextButton.styleFrom(foregroundColor: Colors.black),
-                  onPressed: () async {
-                    final represhToken =
-                        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RAY29kZWZhY3RvcnkuYWkiLCJzdWIiOiJmNTViMzJkMi00ZDY4LTRjMWUtYTNjYS1kYTlkN2QwZDkyZTUiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTY5NDk5MTk2NSwiZXhwIjoxNjk1MDc4MzY1fQ.YlNLsgOMoMJISuvfqBYbHFZGJF7lG6U4aW7fRzeWbYw';
-                    final resp = await dio.post(
-                      'http://$ip/auth/token',
-                      options: Options(
-                          headers: {'authorization': 'Bearer $represhToken'}),
-                    );
-
-                    print(resp.data);
-                  },
+                  onPressed: () async {},
                   child: const Text(
                     '회원가입',
                   ),
