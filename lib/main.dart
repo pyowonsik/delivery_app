@@ -1,4 +1,5 @@
 import 'package:delivery_app/common/component/custom_text_form_filed.dart';
+import 'package:delivery_app/common/view/splash_screen.dart';
 import 'package:delivery_app/user/view/login_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +16,7 @@ class _App extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'NotoSans',
       ),
-      home: const LoginScreen(),
+      home: const SplashScreen(),
     );
   }
 }

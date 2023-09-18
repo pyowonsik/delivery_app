@@ -3,10 +3,12 @@ import 'dart:io';
 
 import 'package:delivery_app/common/component/custom_text_form_filed.dart';
 import 'package:delivery_app/common/const/colors.dart';
+import 'package:delivery_app/common/const/data.dart';
 import 'package:delivery_app/common/layout/default_layout.dart';
 import 'package:delivery_app/common/view/root_tab.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -79,6 +81,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       options:
                           Options(headers: {'authorization': 'Basic $token'}),
                     );
+
+                    final accessToken = resp.data['accessToken'];
+                    final refreshToken = resp.data['refreshToken'];
+
+                    await storage.write(
+                        key: REFRESH_TOKEN_KEY, value: refreshToken);
+                    await storage.write(
+                        key: ACCESS_TOKEN_KEY, value: accessToken);
 
                     Navigator.of(context).push(
                         MaterialPageRoute(builder: (context) => RootTab()));
