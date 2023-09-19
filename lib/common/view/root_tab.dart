@@ -21,6 +21,12 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
     controller.addListener(tabListener);
   }
 
+  void tabListener() {
+    setState(() {
+      index = controller.index;
+    });
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -28,11 +34,9 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
-  void tabListener() {
-    setState(() {
-      index = controller.index;
-    });
-  }
+  // BottomNavigationBar onTap은 tabController의 인덱스 변경 하는 역할
+  // tabController는 addListener로 index변경 감지
+  // 사실상 tabContoller의 인덱스에 따라서 TabBarView의 Ui 변경
 
   @override
   Widget build(BuildContext context) {

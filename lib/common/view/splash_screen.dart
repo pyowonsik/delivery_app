@@ -16,8 +16,8 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // deletToken();
     checkToken();
+    // deletToken();
   }
 
   void checkToken() async {
