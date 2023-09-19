@@ -90,8 +90,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     await storage.write(
                         key: ACCESS_TOKEN_KEY, value: accessToken);
 
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => RootTab()));
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const RootTab()));
 
                     // refreshToken
                     // final refreshToken =
