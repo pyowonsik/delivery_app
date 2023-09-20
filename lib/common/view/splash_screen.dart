@@ -33,10 +33,14 @@ class _SplashScreenState extends State<SplashScreen> {
         'http://$ip/auth/token',
         options: Options(headers: {'authorization': 'Bearer $refreshToken'}),
       );
+      await storage.write(
+          key: ACCESS_TOKEN_KEY, value: resp.data['accessToken']);
+
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const RootTab()),
           (route) => false);
     } catch (e) {
+      // 토큰이 없다면 LoginScreen
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const LoginScreen()),
           (route) => false);
