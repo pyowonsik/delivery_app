@@ -1,5 +1,5 @@
 import 'package:delivery_app/common/const/data.dart';
-import 'package:delivery_app/restaurant/component/restaurant_cart.dart';
+import 'package:delivery_app/restaurant/component/restaurant_card.dart';
 import 'package:delivery_app/restaurant/model/restaurant_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
