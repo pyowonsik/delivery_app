@@ -1,4 +1,5 @@
 import 'package:delivery_app/common/const/data.dart';
+import 'package:delivery_app/common/utils/data_utils.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'restaurant_product_model.g.dart';
 
@@ -6,7 +7,7 @@ part 'restaurant_product_model.g.dart';
 class RestaurantProductModel {
   final String id;
   final String name;
-  @JsonKey(fromJson: pathToUrl)
+  @JsonKey(fromJson: DataUtils.pathToUrl)
   final String imgUrl;
   final String detail;
   final int price;
@@ -20,10 +21,6 @@ class RestaurantProductModel {
 
   factory RestaurantProductModel.fromJson(Map<String, dynamic> json) =>
       _$RestaurantProductModelFromJson(json);
-
-  static pathToUrl(String value) {
-    return 'http://$ip$value';
-  }
 
   // factory RestaurantProductModel.fromJson(
   //     {required Map<String, dynamic> json}) {
