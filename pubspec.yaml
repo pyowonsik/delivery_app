@@ -40,6 +40,8 @@ dependencies:
   json_serializable: ^6.7.1
   build_runner: ^2.4.6
   json_annotation: ^4.8.1
+  retrofit: ^4.0.1
+  retrofit_generator: ^7.0.8
 
 dev_dependencies:
   flutter_test:
