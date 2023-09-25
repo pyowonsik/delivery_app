@@ -10,7 +10,7 @@ abstract class RestaurantRepository {
       _RestaurantRepository;
 
   @GET("/{id}")
-  @Headers({'accessToken': 'true'}) // 'true'를 문자열로 설정
+  @Headers({'accessToken': 'true'})
   Future<RestaurantDetailModel> getRestaurantDetail({
     @Path() required String id,
   });
