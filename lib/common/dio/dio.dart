@@ -7,7 +7,7 @@ class CustomInterceptor extends Interceptor {
 
   CustomInterceptor({required this.storage});
 
-  // 1. 요청
+  // 요청
   // 요청이 보내질때마다 요청의 Header에 accessToken : 'true' 라는 값이 있다면
   // 실제 토큰을 가져와서 (storage)에서 'authorization': 'Bearer $token'으로
   // 헤더를 변경
@@ -40,7 +40,7 @@ class CustomInterceptor extends Interceptor {
     return super.onRequest(options, handler);
   }
 
-  // 정상적인 응답
+  // 응답
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     print(
@@ -50,6 +50,7 @@ class CustomInterceptor extends Interceptor {
     return super.onResponse(response, handler);
   }
 
+  // 에러
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     // 401 에러
