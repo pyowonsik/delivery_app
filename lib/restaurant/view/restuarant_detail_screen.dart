@@ -4,63 +4,87 @@ import 'package:delivery_app/common/layout/default_layout.dart';
 import 'package:delivery_app/product/component/product_card.dart';
 import 'package:delivery_app/restaurant/component/restaurant_card.dart';
 import 'package:delivery_app/restaurant/model/restaurant_detail_model.dart';
+import 'package:delivery_app/restaurant/model/restaurant_model.dart';
 import 'package:delivery_app/restaurant/model/restaurant_product_model.dart';
+import 'package:delivery_app/restaurant/provider/restaurant_provider.dart';
 import 'package:delivery_app/restaurant/repository/restaurant_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:skeletons/skeletons.dart';
 
-class RestaurantDetailScreen extends ConsumerWidget {
+class RestaurantDetailScreen extends ConsumerStatefulWidget {
   final String id;
   const RestaurantDetailScreen({super.key, required this.id});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return DefaultLayout(
-      title: '불타는 떡볶이',
-      child: FutureBuilder<RestaurantDetailModel>(
-          future: ref
-              .watch(restaurantRepositoryProvider)
-              .getRestaurantDetail(id: id),
-          builder: (_, AsyncSnapshot<RestaurantDetailModel> snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
+  ConsumerState<RestaurantDetailScreen> createState() =>
+      _RestaurantDetailScreenState();
+}
 
-            return CustomScrollView(
-              slivers: [
-                renderTop(model: snapshot.data!),
-                renderLabel(),
-                renderProduct(products: snapshot.data!.products),
-                // rend
-              ],
-            );
-          }),
-    );
+class _RestaurantDetailScreenState
+    extends ConsumerState<RestaurantDetailScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    // RestaurantDetailProvider는 notifier가 없고 RestaurantProvider를
+    // watch하고 있기때문에 때문에 RestaurantProvider에 접근해서 getDetail을 실행
+    ref.read(restaurantProvider.notifier).getDetail(id: widget.id);
   }
 
-  SliverToBoxAdapter renderTop({required RestaurantDetailModel model}) {
+  @override
+  Widget build(BuildContext context) {
+    // Detail에 들어오면 RestaurantDetailModel로 바뀐놈을 가져옴
+    final state = ref.watch(restaurantDetailProvier(widget.id));
+
+    if (state == null) {
+      return const DefaultLayout(
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    return DefaultLayout(
+        title: '불타는 떡볶이',
+        child: CustomScrollView(
+          slivers: [
+            renderTop(model: state),
+            if (state is! RestaurantDetailModel) rednderLoading(),
+            if (state is RestaurantDetailModel) renderLabel(),
+            if (state is RestaurantDetailModel)
+              renderProduct(products: state.products),
+          ],
+        ));
+  }
+
+  SliverToBoxAdapter renderTop({required RestaurantModel model}) {
     return SliverToBoxAdapter(
       child: Column(
         children: [
-          RestaurantCard(
-            image: Image.network(
-              model.thumbUrl,
-              fit: BoxFit.cover,
-            ),
-            name: model.name,
-            tags: model.tags,
-            ratingsCount: model.ratingsCount,
-            deliveryTime: model.deliveryTime,
-            deliveryFee: model.deliveryFee,
-            ratings: model.ratings,
+          RestaurantCard.fromModel(
+            model: model,
             isDetail: true,
-            detail: model.detail,
           ),
         ],
       ),
+    );
+  }
+
+  rednderLoading() {
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+      sliver: SliverList(
+          delegate: SliverChildListDelegate(List.generate(
+              3,
+              (index) => Padding(
+                    padding: const EdgeInsets.only(bottom: 32.0),
+                    child: SkeletonParagraph(
+                      style: const SkeletonParagraphStyle(
+                          lines: 5, padding: EdgeInsets.zero),
+                    ),
+                  )))),
     );
   }
 

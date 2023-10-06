@@ -25,6 +25,17 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 //   }
 // }
 
+final restaurantDetailProvier =
+    Provider.family<RestaurantModel?, String>((ref, id) {
+  final state = ref.watch(restaurantProvider);
+
+  if (state is! CursorPagination) {
+    return null;
+  }
+
+  return state.data.firstWhere((e) => e.id == id);
+});
+
 // repository에서 api통신을 해서 db와 통신 (요청을 보내거나 받으면서 데이터를 저장하거나 전송)
 // providerd에서는 repository를 통해 받은 데이터를 provider에 저장 하거나
 // 요청을 보내기 위해 repository에 데이터 전송
@@ -44,7 +55,7 @@ class RestaurantStateNotifier extends StateNotifier<CursorPaginationBase> {
     // class 생성시 paiginate() 실행
     paiginate();
   }
-  void paiginate({
+  Future<void> paiginate({
     int fetchCount = 20,
     // 추가로 데이터 가져오기
     // true - 다음 데이터
@@ -138,5 +149,30 @@ class RestaurantStateNotifier extends StateNotifier<CursorPaginationBase> {
     } catch (e) {
       state = CursorPaginationError(message: '데이터를 가져오지 못했습니다.');
     }
+  }
+
+  // RestaurantModel -> RestaurantDetailModel
+  void getDetail({required String id}) async {
+    // 만약 데이터가 하나도 없는 상태
+    if (state is! CursorPagination) {
+      await paiginate();
+    }
+
+    // state가 CursorPagination이 아닐때
+    if (state is! CursorPagination) {
+      return;
+    }
+
+    final pState = state as CursorPagination;
+
+    final resp = await respository.getRestaurantDetail(id: id);
+
+    // pState.data = pagination() 결과값 -> [RestaurantModel(1) , RestaurantModel(2) , RestaurantModel(3)]
+    // getDetail(2);
+    // [RestaurantModel(1) , RestaurantDetailModel(2) , RestaurantModel(3)]
+    state = pState.copyWith(
+        data: pState.data
+            .map<RestaurantModel>((e) => e.id == id ? resp : e)
+            .toList());
   }
 }
