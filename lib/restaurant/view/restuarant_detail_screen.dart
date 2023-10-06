@@ -1,6 +1,7 @@
 import 'package:delivery_app/common/const/data.dart';
 import 'package:delivery_app/common/dio/dio.dart';
 import 'package:delivery_app/common/layout/default_layout.dart';
+import 'package:delivery_app/common/rating/component/rating_card.dart';
 import 'package:delivery_app/product/component/product_card.dart';
 import 'package:delivery_app/restaurant/component/restaurant_card.dart';
 import 'package:delivery_app/restaurant/model/restaurant_detail_model.dart';
@@ -30,7 +31,7 @@ class _RestaurantDetailScreenState
     super.initState();
 
     // RestaurantDetailProvider는 notifier가 없고 RestaurantProvider를
-    // watch하고 있기때문에 때문에 RestaurantProvider에 접근해서 getDetail을 실행
+    // watch하고 있기때문에 때문에 RestaurantProvider에 접근해서 getDetail을 실행 -> id에 맞는 Restaurant 모델을 RestaurantDetailModel로 변경
     ref.read(restaurantProvider.notifier).getDetail(id: widget.id);
   }
 
@@ -55,6 +56,19 @@ class _RestaurantDetailScreenState
             if (state is RestaurantDetailModel) renderLabel(),
             if (state is RestaurantDetailModel)
               renderProduct(products: state.products),
+            const SliverPadding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              sliver: SliverToBoxAdapter(
+                child: RatingCard(
+                  avatarImage:
+                      AssetImage('asset/img/logo/codefactory_logo.png'),
+                  imges: [],
+                  rating: 4,
+                  email: 'jc@codefactory.com',
+                  content: '맛있습니다.',
+                ),
+              ),
+            )
           ],
         ));
   }
@@ -90,12 +104,12 @@ class _RestaurantDetailScreenState
 
   renderProduct({required List<RestaurantProductModel> products}) {
     return SliverPadding(
-      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       sliver: SliverList(
           delegate: SliverChildBuilderDelegate((context, index) {
         final model = products[index];
         return Padding(
-            padding: EdgeInsets.only(top: 8.0),
+            padding: const EdgeInsets.only(top: 8.0),
             child: ProductCard.fromModel(
               model: model,
             ));
