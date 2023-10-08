@@ -1,8 +1,8 @@
 import 'package:delivery_app/common/const/data.dart';
 import 'package:delivery_app/common/dio/dio.dart';
 import 'package:delivery_app/common/layout/default_layout.dart';
-import 'package:delivery_app/common/rating/component/rating_card.dart';
 import 'package:delivery_app/product/component/product_card.dart';
+import 'package:delivery_app/rating/component/rating_card.dart';
 import 'package:delivery_app/restaurant/component/restaurant_card.dart';
 import 'package:delivery_app/restaurant/model/restaurant_detail_model.dart';
 import 'package:delivery_app/restaurant/model/restaurant_model.dart';

@@ -43,14 +43,14 @@ final restaurantDetailProvier =
 final restaurantProvider =
     StateNotifierProvider<RestaurantStateNotifier, CursorPaginationBase>((ref) {
   final repository = ref.watch(restaurantRepositoryProvider);
-  final notifier = RestaurantStateNotifier(respository: repository);
+  final notifier = RestaurantStateNotifier(repository: repository);
   return notifier;
 });
 
 class RestaurantStateNotifier extends StateNotifier<CursorPaginationBase> {
-  final RestaurantRepository respository;
+  final RestaurantRepository repository;
 
-  RestaurantStateNotifier({required this.respository})
+  RestaurantStateNotifier({required this.repository})
       : super(CursorPaginationLoading()) {
     // class 생성시 paiginate() 실행
     paiginate();
@@ -135,7 +135,7 @@ class RestaurantStateNotifier extends StateNotifier<CursorPaginationBase> {
 
       // 변경된 paginationParams,상태를 이용해서 paginate후 데이터 변경
       final resp =
-          await respository.paginate(paginationParams: paginationParams);
+          await repository.paginate(paginationParams: paginationParams);
 
       if (state is CursorPaginationFetchingMore) {
         final pState = state as CursorPaginationFetchingMore;
@@ -165,7 +165,7 @@ class RestaurantStateNotifier extends StateNotifier<CursorPaginationBase> {
 
     final pState = state as CursorPagination;
 
-    final resp = await respository.getRestaurantDetail(id: id);
+    final resp = await repository.getRestaurantDetail(id: id);
 
     // pState.data = pagination() 결과값 -> [RestaurantModel(1) , RestaurantModel(2) , RestaurantModel(3)]
     // getDetail(2);
