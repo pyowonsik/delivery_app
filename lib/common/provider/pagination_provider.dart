@@ -1,11 +1,14 @@
 import 'package:delivery_app/common/model/cursor_pagination_model.dart';
 import 'package:delivery_app/common/model/model_with_id.dart';
 import 'package:delivery_app/common/model/pagination_params.dart';
-import 'package:delivery_app/common/repository.dart/base_pagination_repository.dart';
+import 'package:delivery_app/common/repository/base_pagination_repository.dart';
 import 'package:delivery_app/restaurant/repository/restaurant_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// Model과 Repository를 제너릭으로 받음으로써  paginationProvider 공통화
+// Model과 Repository를 제너릭으로 받도록 함
+// 인터페이스 Model과 Repository를 impliment 받아서 제너릭 변수로 받아
+// paginationProvider 공통화
+
 class PaginationStateNotifier<T extends IModelWithId,
         U extends IBasePaginationRepository<T>>
     extends StateNotifier<CursorPaginationBase> {
