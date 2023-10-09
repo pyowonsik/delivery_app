@@ -8,6 +8,7 @@ import 'package:delivery_app/restaurant/model/restaurant_detail_model.dart';
 import 'package:delivery_app/restaurant/model/restaurant_model.dart';
 import 'package:delivery_app/restaurant/model/restaurant_product_model.dart';
 import 'package:delivery_app/restaurant/provider/restaurant_provider.dart';
+import 'package:delivery_app/restaurant/provider/restaurant_rating_provider.dart';
 import 'package:delivery_app/restaurant/repository/restaurant_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +40,9 @@ class _RestaurantDetailScreenState
   Widget build(BuildContext context) {
     // Detail에 들어오면 RestaurantDetailModel로 바뀐놈을 가져옴
     final state = ref.watch(restaurantDetailProvier(widget.id));
+    final ratingState = ref.watch(restaurantRatingProvider(widget.id));
 
+    print(ratingState);
     if (state == null) {
       return const DefaultLayout(
         child: Center(
