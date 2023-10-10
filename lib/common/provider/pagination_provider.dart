@@ -5,9 +5,9 @@ import 'package:delivery_app/common/repository/base_pagination_repository.dart';
 import 'package:delivery_app/restaurant/repository/restaurant_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// Model과 Repository를 제너릭으로 받도록 함
-// 인터페이스 Model과 Repository를 impliment 받아서 제너릭 변수로 받아
-// paginationProvider 공통화
+// 공통 Model과 Repository를 인터페이스로 생성
+// 공통 Model과 Repository를 impliment 받아서 제너릭 변수로 받아
+// 공통 PaginationProvideNotifier를 생성 하여 paginationProvider 공통화
 
 class PaginationStateNotifier<T extends IModelWithId,
         U extends IBasePaginationRepository<T>>

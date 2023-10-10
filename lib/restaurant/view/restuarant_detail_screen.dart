@@ -1,8 +1,11 @@
 import 'package:delivery_app/common/const/data.dart';
 import 'package:delivery_app/common/dio/dio.dart';
 import 'package:delivery_app/common/layout/default_layout.dart';
+import 'package:delivery_app/common/model/cursor_pagination_model.dart';
+import 'package:delivery_app/common/utils/pagination_utils.dart';
 import 'package:delivery_app/product/component/product_card.dart';
 import 'package:delivery_app/rating/component/rating_card.dart';
+import 'package:delivery_app/rating/model/rating_model.dart';
 import 'package:delivery_app/restaurant/component/restaurant_card.dart';
 import 'package:delivery_app/restaurant/model/restaurant_detail_model.dart';
 import 'package:delivery_app/restaurant/model/restaurant_model.dart';
@@ -26,6 +29,8 @@ class RestaurantDetailScreen extends ConsumerStatefulWidget {
 
 class _RestaurantDetailScreenState
     extends ConsumerState<RestaurantDetailScreen> {
+  ScrollController controller = ScrollController();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -34,6 +39,14 @@ class _RestaurantDetailScreenState
     // RestaurantDetailProvider는 notifier가 없고 RestaurantProvider를
     // watch하고 있기때문에 때문에 RestaurantProvider에 접근해서 getDetail을 실행 -> id에 맞는 Restaurant 모델을 RestaurantDetailModel로 변경
     ref.read(restaurantProvider.notifier).getDetail(id: widget.id);
+
+    controller.addListener(listener);
+  }
+
+  void listener() {
+    PaginationUtils.paginate(
+        controller: controller,
+        provider: ref.read(restaurantRatingProvider(widget.id).notifier));
   }
 
   @override
@@ -42,7 +55,6 @@ class _RestaurantDetailScreenState
     final state = ref.watch(restaurantDetailProvier(widget.id));
     final ratingState = ref.watch(restaurantRatingProvider(widget.id));
 
-    print(ratingState);
     if (state == null) {
       return const DefaultLayout(
         child: Center(
@@ -53,27 +65,30 @@ class _RestaurantDetailScreenState
     return DefaultLayout(
         title: '불타는 떡볶이',
         child: CustomScrollView(
+          controller: controller,
           slivers: [
             renderTop(model: state),
             if (state is! RestaurantDetailModel) rednderLoading(),
             if (state is RestaurantDetailModel) renderLabel(),
             if (state is RestaurantDetailModel)
               renderProduct(products: state.products),
-            const SliverPadding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              sliver: SliverToBoxAdapter(
-                child: RatingCard(
-                  avatarImage:
-                      AssetImage('asset/img/logo/codefactory_logo.png'),
-                  imges: [],
-                  rating: 4,
-                  email: 'jc@codefactory.com',
-                  content: '맛있습니다.',
-                ),
-              ),
-            )
+            if (ratingState is CursorPagination<RatingModel>)
+              renderRatings(models: ratingState.data)
           ],
         ));
+  }
+
+  SliverPadding renderRatings({required List<RatingModel> models}) {
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate(
+            (context, index) => Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: RatingCard.fromModel(model: models[index])),
+            childCount: models.length),
+      ),
+    );
   }
 
   SliverToBoxAdapter renderTop({required RestaurantModel model}) {
