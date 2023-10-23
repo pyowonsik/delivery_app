@@ -52,7 +52,11 @@ class RestaurantStateNotifier
     // 데이터 없음 -> 에러 발생
     // 데이터가 없을때는 캐시의 끝에다가 데이터를 추가하면된다.
     // [RestaurantModel(1) , RestaurantModel(2) , RestaurantModel(3) ,
-    //  RestaurantDetailModel(10)]
+    // RestaurantDetailModel(10)]
+    // 결론은 , ProductCard 선택시 id가 현재 Restaurant에 없다면 RestaurantDetailModel을 extends 받고 있는
+    // ProductModel을 이용해서 state에 강제로 추가한다. -> ProductCard 선택시 RestaurantDetail 가능
+
+    print(state);
 
     if (pState.data.where((e) => id == e.id).isEmpty) {
       // emit 역할

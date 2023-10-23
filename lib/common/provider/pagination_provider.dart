@@ -5,9 +5,14 @@ import 'package:delivery_app/common/repository/base_pagination_repository.dart';
 import 'package:delivery_app/restaurant/repository/restaurant_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// 공통 Model과 Repository를 인터페이스로 생성
-// 공통 Model과 Repository를 impliment 받아서 제너릭 변수로 받아
-// 공통 PaginationProvideNotifier를 생성 하여 paginationProvider 공통화
+// Generic을 이용한 공통회 정리 ->
+// 공통 Model(IModelWithId)과 Repository(IBasePaginationRepository)를 인터페이스로 생성
+// model들은 공통 모델인 IModelWithId를 상속 받게한다.
+// 공통 PaginationStateNotifier를 생성할때 제네릭을 이용하여 어떤 타입의 모델인지를
+// IModelWithId를 상속 받는 모델을 Generic을 사용하여 구분할수 있게 한다.
+// repository는 공통 레포지토리(IBasePaginationRepository)상속 받게 하는데 공통 레포지토리(IBasePaginationRepository)는 어떤 모델의 레포지토리인지 구분을 위하여
+// 공통모델을 제네릭을 사용하여 구분한 레포지토리를 상속받는다.
+// 공통 PaginationStateNotifier를 이용하여 Provider를 생성한다.
 
 class PaginationStateNotifier<T extends IModelWithId,
         U extends IBasePaginationRepository<T>>
