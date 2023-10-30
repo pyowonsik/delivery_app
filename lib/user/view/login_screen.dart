@@ -7,6 +7,8 @@ import 'package:delivery_app/common/const/data.dart';
 import 'package:delivery_app/common/layout/default_layout.dart';
 import 'package:delivery_app/common/secure_storage/secure_storage.dart';
 import 'package:delivery_app/common/view/root_tab.dart';
+import 'package:delivery_app/user/model/user_model.dart';
+import 'package:delivery_app/user/provider/user_me_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,8 +28,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final dio = Dio();
-
+    final state = ref.watch(userMeProvider);
     return DefaultLayout(
       child: SingleChildScrollView(
         keyboardDismissBehavior:
@@ -66,33 +67,39 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: PRIMARY_COLOR,
                   ),
-                  onPressed: () async {
-                    // Id:Pass
-                    // final rawString = 'test@codefactory.ai:testtest';
-                    final rawString = '$username:$password';
+                  onPressed: state is UserModelLoading
+                      ? null
+                      : () async {
+                          ref
+                              .read(userMeProvider.notifier)
+                              .login(username: username, password: password);
 
-                    // string -> base64 인코딩 코드
-                    Codec<String, String> stringToBase64 = utf8.fuse(base64);
-                    String token = stringToBase64.encode(rawString);
+                          // // Id:Pass
+                          // // final rawString = 'test@codefactory.ai:testtest';
+                          // final rawString = '$username:$password';
 
-                    final resp = await dio.post(
-                      'http://$ip/auth/login',
-                      options:
-                          Options(headers: {'authorization': 'Basic $token'}),
-                    );
+                          // // string -> base64 인코딩 코드
+                          // Codec<String, String> stringToBase64 = utf8.fuse(base64);
+                          // String token = stringToBase64.encode(rawString);
 
-                    final accessToken = resp.data['accessToken'];
-                    final refreshToken = resp.data['refreshToken'];
+                          // final resp = await dio.post(
+                          //   'http://$ip/auth/login',
+                          //   options:
+                          //       Options(headers: {'authorization': 'Basic $token'}),
+                          // );
 
-                    final storage = ref.read(secureStorageProvider);
-                    await storage.write(
-                        key: REFRESH_TOKEN_KEY, value: refreshToken);
-                    await storage.write(
-                        key: ACCESS_TOKEN_KEY, value: accessToken);
+                          // final accessToken = resp.data['accessToken'];
+                          // final refreshToken = resp.data['refreshToken'];
 
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const RootTab()));
-                  },
+                          // final storage = ref.read(secureStorageProvider);
+                          // await storage.write(
+                          //     key: REFRESH_TOKEN_KEY, value: refreshToken);
+                          // await storage.write(
+                          //     key: ACCESS_TOKEN_KEY, value: accessToken);
+
+                          // Navigator.of(context).push(MaterialPageRoute(
+                          //     builder: (context) => const RootTab()));
+                        },
                   child: Text('로그인'),
                 ),
                 TextButton(
