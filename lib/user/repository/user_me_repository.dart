@@ -7,11 +7,14 @@ import 'package:retrofit/http.dart';
 
 part 'user_me_repository.g.dart';
 
-final userMeRepositoryProvider = Provider<UserMeRepository>((ref) {
-  final dio = ref.watch(dioProvider);
+// 토큰을 이용하여 유저 정보를 가져옴.
+final userMeRepositoryProvider = Provider<UserMeRepository>(
+  (ref) {
+    final dio = ref.watch(dioProvider);
 
-  return UserMeRepository(dio, baseUrl: 'http://$ip/user/me');
-});
+    return UserMeRepository(dio, baseUrl: 'http://$ip/user/me');
+  },
+);
 
 @RestApi()
 abstract class UserMeRepository {
