@@ -1,8 +1,6 @@
 import 'package:delivery_app/common/const/data.dart';
-import 'package:delivery_app/common/dio/dio.dart';
 import 'package:delivery_app/common/secure_storage/secure_storage.dart';
 import 'package:delivery_app/user/model/user_model.dart';
-import 'package:delivery_app/user/provider/auth_provider.dart';
 import 'package:delivery_app/user/repository/auth_repository.dart';
 import 'package:delivery_app/user/repository/user_me_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,9 +40,13 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
       return;
     }
 
-    final resp = await repository.getMe();
+    try {
+      final resp = await repository.getMe();
 
-    state = resp;
+      state = resp;
+    } catch (e) {
+      state = null;
+    }
   }
 
   Future<UserModelBase?> login(

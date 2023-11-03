@@ -2,7 +2,6 @@ import 'package:delivery_app/common/model/cursor_pagination_model.dart';
 import 'package:delivery_app/common/model/model_with_id.dart';
 import 'package:delivery_app/common/model/pagination_params.dart';
 import 'package:delivery_app/common/repository/base_pagination_repository.dart';
-import 'package:delivery_app/restaurant/repository/restaurant_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Generic을 이용한 공통회 정리 ->

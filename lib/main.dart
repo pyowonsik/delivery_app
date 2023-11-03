@@ -1,8 +1,4 @@
-import 'package:delivery_app/common/component/custom_text_form_filed.dart';
 import 'package:delivery_app/common/provider/go_router.dart';
-import 'package:delivery_app/common/view/splash_screen.dart';
-import 'package:delivery_app/user/provider/auth_provider.dart';
-import 'package:delivery_app/user/view/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
