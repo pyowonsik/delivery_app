@@ -1,5 +1,7 @@
 import 'package:delivery_app/common/const/data.dart';
 import 'package:delivery_app/common/secure_storage/secure_storage.dart';
+import 'package:delivery_app/user/provider/auth_provider.dart';
+import 'package:delivery_app/user/provider/user_me_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -7,15 +9,16 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio();
   final storage = ref.watch(secureStorageProvider);
-  dio.interceptors.add(CustomInterceptor(storage: storage));
+  dio.interceptors.add(CustomInterceptor(storage: storage, ref: ref));
 
   return dio;
 });
 
 class CustomInterceptor extends Interceptor {
   final FlutterSecureStorage storage;
+  final Ref ref;
 
-  CustomInterceptor({required this.storage});
+  CustomInterceptor({required this.storage, required this.ref});
 
   // 요청
   // 요청이 보내질때마다 요청의 Header에 accessToken : 'true' 라는 값이 있다면
@@ -109,6 +112,18 @@ class CustomInterceptor extends Interceptor {
       }
       // Token문제가 아니라면 err
       catch (e) {
+        // circular dependency error
+        // A,B
+        // A -> B의 친구
+        // B -> A의 친구
+        // A -> B -> A -> B
+
+        // ump의 authRepository , userMeRepository 에서 모두 dio를 사용중이기 때문에 !!
+        // ump(userMeProvider) -> dio -> ump -> dio
+
+        // authProvider는 dio를 동시에 dependency를 않기 때문에 에러가 발생하지 않는다.
+        // 하지만 userMeProvider는 dio를 동시에 dependency 하고 있다.
+        ref.read(authProvider.notifier).logout();
         // 에러 반환
         return handler.reject(err);
       }
