@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:delivery_app/common/view/root_tab.dart';
 import 'package:delivery_app/common/view/splash_screen.dart';
+import 'package:delivery_app/restaurant/view/basket_screen.dart';
 import 'package:delivery_app/restaurant/view/restuarant_detail_screen.dart';
 import 'package:delivery_app/user/model/user_model.dart';
 import 'package:delivery_app/user/provider/user_me_provider.dart';
@@ -29,17 +30,23 @@ class AuthProvider extends ChangeNotifier {
 
   List<GoRoute> get routes => [
         GoRoute(
-            path: '/',
-            name: RootTab.routeName,
-            builder: (_, __) => const RootTab(),
-            routes: [
-              GoRoute(
-                path: 'restaurant/:rid',
-                name: RestaurantDetailScreen.routeName,
-                builder: (_, state) =>
-                    RestaurantDetailScreen(id: state.pathParameters['rid']!),
-              ),
-            ]),
+          path: '/',
+          name: RootTab.routeName,
+          builder: (_, __) => const RootTab(),
+          routes: [
+            GoRoute(
+              path: 'restaurant/:rid',
+              name: RestaurantDetailScreen.routeName,
+              builder: (_, state) =>
+                  RestaurantDetailScreen(id: state.pathParameters['rid']!),
+            ),
+          ],
+        ),
+        GoRoute(
+          path: '/basket',
+          name: BasketScreen.routeName,
+          builder: (_, state) => const BasketScreen(),
+        ),
         GoRoute(
           path: '/splash',
           name: SplashScreen.routeName,

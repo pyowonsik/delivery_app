@@ -68,6 +68,7 @@ class BasketProvider extends StateNotifier<List<BasketItemModel>> {
 
     // Optimistic Response(긍정적 응답)
     // 응답이 성공할것이라고 가정하고 상태를 먼저 업데이트 한다.
+    // add를 먼저 해주고 api 통신을 통해 db에도 적용
     await patchBasket();
   }
 

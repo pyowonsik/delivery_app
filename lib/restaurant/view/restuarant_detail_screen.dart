@@ -12,9 +12,11 @@ import 'package:delivery_app/restaurant/model/restaurant_model.dart';
 import 'package:delivery_app/restaurant/model/restaurant_product_model.dart';
 import 'package:delivery_app/restaurant/provider/restaurant_provider.dart';
 import 'package:delivery_app/restaurant/provider/restaurant_rating_provider.dart';
+import 'package:delivery_app/restaurant/view/basket_screen.dart';
 import 'package:delivery_app/user/provider/basket_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:skeletons/skeletons.dart';
 
 class RestaurantDetailScreen extends ConsumerStatefulWidget {
@@ -70,6 +72,7 @@ class _RestaurantDetailScreenState
           backgroundColor: PRIMARY_COLOR,
           onPressed: () {
             // 장바구니
+            context.pushNamed(BasketScreen.routeName);
           },
           // 원하는 위젯에 badge를 달아줌.
           // badge == 장바구니 state의 count
