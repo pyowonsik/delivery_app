@@ -1,7 +1,9 @@
+import 'package:delivery_app/common/const/colors.dart';
 import 'package:delivery_app/common/layout/default_layout.dart';
 import 'package:delivery_app/common/model/cursor_pagination_model.dart';
 import 'package:delivery_app/common/utils/pagination_utils.dart';
 import 'package:delivery_app/product/component/product_card.dart';
+import 'package:delivery_app/product/model/product_model.dart';
 import 'package:delivery_app/rating/component/rating_card.dart';
 import 'package:delivery_app/rating/model/rating_model.dart';
 import 'package:delivery_app/restaurant/component/restaurant_card.dart';
@@ -10,6 +12,7 @@ import 'package:delivery_app/restaurant/model/restaurant_model.dart';
 import 'package:delivery_app/restaurant/model/restaurant_product_model.dart';
 import 'package:delivery_app/restaurant/provider/restaurant_provider.dart';
 import 'package:delivery_app/restaurant/provider/restaurant_rating_provider.dart';
+import 'package:delivery_app/user/provider/basket_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skeletons/skeletons.dart';
@@ -52,6 +55,7 @@ class _RestaurantDetailScreenState
     // Detail에 들어오면 RestaurantDetailModel로 바뀐놈을 가져옴
     final state = ref.watch(restaurantDetailProvier(widget.id));
     final ratingState = ref.watch(restaurantRatingProvider(widget.id));
+    final basket = ref.watch(basketProvider);
 
     if (state == null) {
       return const DefaultLayout(
@@ -62,6 +66,24 @@ class _RestaurantDetailScreenState
     }
     return DefaultLayout(
         title: '불타는 떡볶이',
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: PRIMARY_COLOR,
+          onPressed: () {
+            // 장바구니
+          },
+          // 원하는 위젯에 badge를 달아줌.
+          // badge == 장바구니 state의 count
+          child: Badge(
+            label: Text(
+              basket
+                  .fold<int>(0, (previous, next) => previous + next.count)
+                  .toString(),
+              style: const TextStyle(color: PRIMARY_COLOR, fontSize: 10.0),
+            ),
+            backgroundColor: Colors.white,
+            child: const Icon(Icons.shopping_basket_outlined),
+          ),
+        ),
         child: CustomScrollView(
           controller: controller,
           slivers: [
@@ -69,7 +91,7 @@ class _RestaurantDetailScreenState
             if (state is! RestaurantDetailModel) rednderLoading(),
             if (state is RestaurantDetailModel) renderLabel(),
             if (state is RestaurantDetailModel)
-              renderProduct(products: state.products),
+              renderProduct(products: state.products, restaurant: state),
             if (ratingState is CursorPagination<RatingModel>)
               renderRatings(models: ratingState.data)
           ],
@@ -118,17 +140,32 @@ class _RestaurantDetailScreenState
     );
   }
 
-  renderProduct({required List<RestaurantProductModel> products}) {
+  renderProduct(
+      {required List<RestaurantProductModel> products,
+      required RestaurantModel restaurant}) {
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       sliver: SliverList(
           delegate: SliverChildBuilderDelegate((context, index) {
         final model = products[index];
-        return Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: ProductCard.fromRestaurantProdcutModel(
-              model: model,
-            ));
+        return InkWell(
+          onTap: () {
+            ref.read(basketProvider.notifier).addToBasket(
+                  product: ProductModel(
+                      id: model.id,
+                      name: model.name,
+                      detail: model.detail,
+                      imgUrl: model.imgUrl,
+                      price: model.price,
+                      restaurant: restaurant),
+                );
+          },
+          child: Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: ProductCard.fromRestaurantProdcutModel(
+                model: model,
+              )),
+        );
       }, childCount: products.length)),
     );
   }
