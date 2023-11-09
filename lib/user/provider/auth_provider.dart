@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:delivery_app/common/view/root_tab.dart';
 import 'package:delivery_app/common/view/splash_screen.dart';
+import 'package:delivery_app/order/view/order_done_screen.dart';
 import 'package:delivery_app/restaurant/view/basket_screen.dart';
 import 'package:delivery_app/restaurant/view/restuarant_detail_screen.dart';
 import 'package:delivery_app/user/model/user_model.dart';
@@ -41,6 +42,11 @@ class AuthProvider extends ChangeNotifier {
                   RestaurantDetailScreen(id: state.pathParameters['rid']!),
             ),
           ],
+        ),
+        GoRoute(
+          path: '/order_done',
+          name: OrderDoneScreen.routeName,
+          builder: (_, state) => const OrderDoneScreen(),
         ),
         GoRoute(
           path: '/basket',

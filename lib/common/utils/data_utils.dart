@@ -6,6 +6,10 @@ class DataUtils {
   // value = json['thumbUrl']
   // value = json['imgUrl']
 
+  static DateTime stringToDateTime(String value) {
+    return DateTime.parse(value);
+  }
+
   static String pathToUrl(String value) {
     return 'http://$ip $value';
   }
