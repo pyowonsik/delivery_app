@@ -51,7 +51,6 @@ class PaginationStateNotifier<T extends IModelWithId,
     // true - cursorPaginationLoading()
     bool forceRefetch = false,
   }) async {
-    // _throttlePagination();
     paginationThrottle.setValue(_PaginationInfo(
         fetchCount: fetchCount,
         fetchMore: fetchMore,
