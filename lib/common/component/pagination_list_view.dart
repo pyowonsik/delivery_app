@@ -13,7 +13,11 @@ class PaginationListView<T extends IModelWithId>
   final StateNotifierProvider<PaginationStateNotifier, CursorPaginationBase>
       provider;
   final PaginationWidgetBuilder<T> itemBuilder;
-  const PaginationListView(this.provider, this.itemBuilder, {super.key});
+  const PaginationListView({
+    super.key,
+    required this.provider,
+    required this.itemBuilder,
+  });
 
   @override
   ConsumerState<PaginationListView> createState() =>
@@ -84,33 +88,39 @@ class _PaginationListViewState<T extends IModelWithId>
     }
 
     final cp = state as CursorPagination<T>;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: ListView.separated(
-        controller: controller,
-        itemCount: cp.data.length + 1,
-        itemBuilder: (context, index) {
-          if (index == cp.data.length) {
-            return Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Center(
-                child: cp is CursorPaginationFetchingMore
-                    ? const CircularProgressIndicator()
-                    : const Text('데이터가 마지막 데이터 입니다.'),
-              ),
-            );
-          }
-          // model
-          final pItem = cp.data[index];
+    return RefreshIndicator(
+      onRefresh: () async {
+        ref.read(widget.provider.notifier).paiginate(forceRefetch: true);
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: ListView.separated(
+          physics: const AlwaysScrollableScrollPhysics(),
+          controller: controller,
+          itemCount: cp.data.length + 1,
+          itemBuilder: (context, index) {
+            if (index == cp.data.length) {
+              return Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Center(
+                  child: cp is CursorPaginationFetchingMore
+                      ? const CircularProgressIndicator()
+                      : const Text('데이터가 마지막 데이터 입니다.'),
+                ),
+              );
+            }
+            // model
+            final pItem = cp.data[index];
 
-          return widget.itemBuilder(context, index, pItem);
-        },
-        separatorBuilder: (context, index) {
-          return const SizedBox(
-            height: 16.0,
-          );
-        },
+            return widget.itemBuilder(context, index, pItem);
+          },
+          separatorBuilder: (context, index) {
+            return const SizedBox(
+              height: 16.0,
+            );
+          },
+        ),
       ),
     );
   }

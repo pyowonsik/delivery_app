@@ -1,3 +1,4 @@
+import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:delivery_app/common/model/cursor_pagination_model.dart';
 import 'package:delivery_app/common/model/model_with_id.dart';
 import 'package:delivery_app/common/model/pagination_params.dart';
@@ -13,13 +14,31 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // 공통모델을 제네릭을 사용하여 구분한 레포지토리를 상속받는다.
 // 공통 PaginationStateNotifier를 이용하여 Provider를 생성한다.
 
+class _PaginationInfo {
+  int fetchCount;
+  bool fetchMore;
+  bool forceRefetch;
+
+  _PaginationInfo(
+      {this.fetchCount = 20,
+      this.fetchMore = false,
+      this.forceRefetch = false});
+}
+
 class PaginationStateNotifier<T extends IModelWithId,
         U extends IBasePaginationRepository<T>>
     extends StateNotifier<CursorPaginationBase> {
   final U repository;
+  final paginationThrottle = Throttle(const Duration(seconds: 3),
+      initialValue: _PaginationInfo(), checkEquality: false);
   PaginationStateNotifier({required this.repository})
       : super(CursorPaginationLoading()) {
     paiginate();
+
+    // paginationThrottle.setValue 실행시 감지되어 _throttlePagination 실행
+    paginationThrottle.values.listen((state) {
+      _throttlePagination(state);
+    });
   }
 
   Future<void> paiginate({
@@ -32,6 +51,14 @@ class PaginationStateNotifier<T extends IModelWithId,
     // true - cursorPaginationLoading()
     bool forceRefetch = false,
   }) async {
+    // _throttlePagination();
+    paginationThrottle.setValue(_PaginationInfo(
+        fetchCount: fetchCount,
+        fetchMore: fetchMore,
+        forceRefetch: forceRefetch));
+  }
+
+  _throttlePagination(_PaginationInfo info) async {
     try {
       // 1. CursorPagination - 정상적으로 데이터 있는 상태
       // 2. CursorPaginationLoading - 데이터 로딩중
@@ -47,7 +74,7 @@ class PaginationStateNotifier<T extends IModelWithId,
       // 첫번째 요청후 재요청 없이 그냥 반환 -> 처음 pagination이 되면 더이상 하지않는다.
       // 1번 반환 상황
       // 기본값 fetchMore == false , 데이터를 가져왔지만 새로고침을 하지않을경우 데이터를 더 가져오지 않을때에는 반환을 해야한다.
-      if (state is CursorPagination && forceRefetch == false) {
+      if (state is CursorPagination && info.forceRefetch == false) {
         // 강제적 가정을 해야 state의 meta , data 접근 가능
         final pState = state as CursorPagination;
 
@@ -62,19 +89,19 @@ class PaginationStateNotifier<T extends IModelWithId,
 
       // 2번 반환 상황
       // fetchMore == true , 추가데이터를 요청했는데 상태가 로딩 상태일경우(데이터 요청) 중복으로 데이터를 가져올수 있으니 , 로딩상태일때는 즉각 반환을 해야한다.
-      if (fetchMore && (isLoading || isRefetching || isFetchingMore)) {
+      if (info.fetchMore && (isLoading || isRefetching || isFetchingMore)) {
         return;
       }
 
       // ------------------------------------------------------------------------- //
       // 재요청을 위해 paginationParams 생성
       PaginationParams paginationParams = PaginationParams(
-        count: fetchCount,
+        count: info.fetchCount,
       );
 
       // fetchMore == true , 첫번째 요청후 데이터를 추가로 가져오는 상황
       // 새로운 데이터를 가져오는 상황
-      if (fetchMore) {
+      if (info.fetchMore) {
         final pState = state as CursorPagination<T>;
 
         // 중복으로 데이터를 가져올수 있으니 , state를 CursorPaginationFetchingMore 상태로 바꿔줘서 반환이 되게 하고
@@ -91,7 +118,7 @@ class PaginationStateNotifier<T extends IModelWithId,
       else {
         // 만약 데이터가 있는 상황이라면
         // 기존 데이터를 보존한채로 Fetch(API 요청)을 진행
-        if (state is CursorPagination && !forceRefetch) {
+        if (state is CursorPagination && !info.forceRefetch) {
           final pState = state as CursorPagination;
           state =
               CursorPaginationRefetching(meta: pState.meta, data: pState.data);

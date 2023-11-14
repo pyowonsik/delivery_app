@@ -11,17 +11,18 @@ class RestaurantScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PaginationListView<RestaurantModel>(restaurantProvider,
-        <RestaurantModel>(_, index, model) {
-      return GestureDetector(
-        onTap: () {
-          context.goNamed(RestaurantDetailScreen.routeName,
-              pathParameters: {'rid': model.id});
-        },
-        child: RestaurantCard.fromModel(
-          model: model,
-        ),
-      );
-    });
+    return PaginationListView<RestaurantModel>(
+        provider: restaurantProvider,
+        itemBuilder: <RestaurantModel>(_, index, model) {
+          return GestureDetector(
+            onTap: () {
+              context.goNamed(RestaurantDetailScreen.routeName,
+                  pathParameters: {'rid': model.id});
+            },
+            child: RestaurantCard.fromModel(
+              model: model,
+            ),
+          );
+        });
   }
 }

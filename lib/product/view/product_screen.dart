@@ -12,13 +12,12 @@ class ProductScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PaginationListView<ProductModel>(
-      productProvider,
-      <ProductModel>(_, index, model) => GestureDetector(
+      provider: productProvider,
+      itemBuilder: <ProductModel>(_, index, model) => GestureDetector(
         child: GestureDetector(
           onTap: () {
             context.goNamed(RestaurantDetailScreen.routeName,
-                pathParameters: {'rid': model.restaurant.id 
-                });
+                pathParameters: {'rid': model.restaurant.id});
 
             Navigator.of(context).push(
               MaterialPageRoute(
